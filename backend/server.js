@@ -4,7 +4,7 @@ import axios from 'axios';
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-    apiKey: "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" // Use your actual OpenAI API key here
+    apiKey: "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" // Use your actual OpenAI API key here
 });
 
 const app = express();
@@ -17,7 +17,7 @@ app.post('/api/chat', async (req, res) => {
     ];
 
     const { messages } = req.body;
-    messages[messages.length-1].content = `${messages[messages.length-1].content}. Use the https://developer.paypal.com/ to find your information.`
+    messages[messages.length-1].content = `${messages[messages.length-1].content}.`
 
     try {
         const response =  await openai.chat.completions.create({
@@ -25,6 +25,22 @@ app.post('/api/chat', async (req, res) => {
             messages: [...messages, ...demoModel],
         });
         console.log(response)
+        res.json(response.choices[0].message);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+app.post('/api/avatar', async (req, res) => {
+    const {prompt} = req.body;
+    try {
+        const response = openai.Image.create(
+            prompt= `Create an avatar for the ${prompt} of a chat`,
+            n=2,
+            size="512x512"
+          )
+        imageUrl = response.data[0].url;
         res.json(response.choices[0].message);
     } catch (error) {
         console.error(error);
