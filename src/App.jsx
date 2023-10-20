@@ -40,17 +40,22 @@ function App() {
         <div className="App">
             <div className="chat-container" id="chat-container">
                 {messages.map((message, index) => (
-                    <div key={index} className={`message ${message.role}`}>
-                        {message.content}
+                    message.content !== undefined ?
+                        <div key={index} className={`message ${message.role}`}>
+                            {message.content}
+                        </div>
+                    :
+                    <div key={index} className="message assistant">
+                           Error in the server
                     </div>
                 ))}
             </div>
             <div className="input-container">
-                <input
-                    type="text"
+                <textarea
+                    rows="4" cols="50"
                     value={inputMessage}
                     onChange={(e) => setInputMessage(e.target.value)}
-                    placeholder="Type a message..."
+                    placeholder="Chat with the AI bot"
                 />
                 <button onClick={handleMessageSend}>Send</button>
             </div>

@@ -6,6 +6,9 @@
   height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #222;
 }
 
 
@@ -15,6 +18,42 @@
   justify-content: center;
 }
 
-input {
+textarea {
   min-width: 500px;
+  border: 0;
+}
+
+.input-container {
+  margin: 24px;
+}
+
+button {
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #1a1a1a;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.chat-container {
+  width: 100%;
+}
+
+.message {
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+}
+
+.user {
+  background: #373737de;
+}
+
+.assistant {
+  background: #777777de;
+  display: flex;
+  justify-content: flex-end;
 }
