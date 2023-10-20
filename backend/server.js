@@ -4,7 +4,7 @@ import axios from 'axios';
 import OpenAI from "openai";
 
 const openai = new OpenAI({
-    apiKey: "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" // Use your actual OpenAI API key here
+    apiKey: "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" // Use your actual OpenAI API key here
 });
 
 const app = express();
@@ -32,18 +32,37 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
+
+
 app.post('/api/avatar', async (req, res) => {
-    const {prompt} = req.body;
+
+    const requestData = {
+        prompt: `generate picture of animal`,
+        n: 2,
+        size: '256x256'
+    };
+
     try {
-        const response = openai.Image.create(
-            prompt= `Create an avatar for the ${prompt} of a chat`,
-            n=2,
-            size="512x512"
-          )
-        imageUrl = response.data[0].url;
-        res.json(response.choices[0].message);
+        const response = await fetch("https://api.openai.com/v1/images/generations", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer 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`
+            },
+            body: JSON.stringify(requestData)
+        });
+
+        console.log(response); // Move this line here
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Response:', data);
+            res.json(data.data);
+        } else {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
     } catch (error) {
-        console.error(error);
+        console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

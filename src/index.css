@@ -66,3 +66,9 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.avatar {
+  height: 25px;
+  width: 25px;
+  margin: 8px;
+}

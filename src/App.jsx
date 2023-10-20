@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import './App.css';
 
@@ -6,17 +6,8 @@ function App() {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [isLoading, setisLoading] = useState('START');
-
-    let assistantImage = '';
-    let userImage = '';
-    // assistantImage = await generateImage('assistant');
-    // userImage = await generateImage('user');
-
-    useEffect(() => {
-        // Scroll to the bottom of the chat window when new messages are added
-        const chatContainer = document.getElementById('chat-container');
-        chatContainer.scrollTop = chatContainer.scrollHeight;
-    }, [messages]);
+    const [userImage, setUserImage] = useState(null);
+    const [assistantImage, setAssistantImage] = useState(null);
 
     const handleMessageSend = async () => {
         setisLoading('LOADING');
@@ -43,29 +34,41 @@ function App() {
         }
     };
 
-    const generateImage = async(prompt) => {
-        try {
-            const response = await fetch("api/avatar", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ prompt }),
-            });
-            const data = await response.json();
-            console.log(data)
-            return data;
-        } catch (error) {
-            console.error(error);
+    useEffect(() => {
+        // Scroll to the bottom of the chat window when new messages are added
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+    }, [messages]);
+
+    useEffect(() =>{
+        const generateImage = async () =>{
+            try {
+                const response = await fetch("api/avatar", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ prompt }),
+                });
+                const data = await response.json();
+                console.log('images', data)
+                setUserImage(data[0].url)
+                setAssistantImage(data[1].url)
+                return data;
+            } catch (error) {
+                console.error(error);
+            }
         }
-    }
+        generateImage();
+    },  [])
 
     return (
         <div className="App">
                 <div className="chat-container" id="chat-container">
                         {messages.map((message, index) => (
                             message.content !== undefined ?
-                            <div key={index} className={`message ${message.role}`}>
+                            (<div key={index} className={`message ${message.role}`}>
+                                <img src={message.role === 'user' ? userImage : assistantImage} alt="user image" className="avatar" />
                                 {message.role === 'assistant' ? (
                                     <div className="assistant-message">
                                         <ReactMarkdown>{message.content}</ReactMarkdown>
@@ -73,7 +76,7 @@ function App() {
                                 ) : (
                                     message.content
                                 )}
-                            </div>
+                            </div>)
                             :
                             <div key={index} className="message assistant">
                                 Error in the server
@@ -85,7 +88,7 @@ function App() {
                         </div>}
                 </div>
                     <div className="input-container">
-                    {/* { assistantImage !== '' && userImage!== '' ? */}
+                    { assistantImage !== null && userImage!== null ?
                         <>
                             <textarea
                                 rows="4" cols="50"
@@ -96,9 +99,9 @@ function App() {
                             <button onClick={handleMessageSend}>Send</button>
 
                         </>
-                        {/* : */}
-                        {/* (<div className="spinner"></div>) */}
-                    {/* } */}
+                        :
+                        (<div className="spinner"></div>)
+                    }
             </div>
         </div>
     );

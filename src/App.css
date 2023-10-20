@@ -56,7 +56,6 @@ button {
 .assistant {
   background: #777777de;
   display: flex;
-  justify-content: flex-end;
 }
 
 .spinner {
