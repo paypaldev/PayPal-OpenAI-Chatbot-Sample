@@ -1,28 +1,52 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import axios from 'axios';
 import OpenAI from "openai";
+import "dotenv/config";
 
 const openai = new OpenAI({
-    apiKey: "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" // Use your actual OpenAI API key here
+    apiKey: process.env.OPENAI_API_KEY
 });
+
+console.log(process.env.OPENAI_API_KEY)
 
 const app = express();
 app.use(bodyParser.json());
 
 app.post('/api/chat', async (req, res) => {
+
+    /*
+    Train the model by giving it some previous conversations
+    */
     const demoModel = [
         { role: 'user', content: 'Hi, can you tell me where to find information about the paypal javascript sdk?' },
         { role: 'assistant', content: 'Yes, the conentent can be found inside of this website https://developer.paypal.com/dashboard/' },
+        { role: 'user', content: 'can you tell me where to find information about the paypal orders api?' },
+        { role: 'assistant', content: 'Yes, the conentent can be found inside of this website https://developer.paypal.com/docs/api/orders/v2/#orders_create' },
+        { role: 'user', content: 'can you tell me how to style my paypal buttons?' },
+        {
+            role: 'assistant', content: `Yes, to style the paypal buttons follow this guide https://developer.paypal.com/sdk/js/reference/#link-style and this
+        sample code
+        paypal.Buttons({
+            style: {
+              layout: 'vertical',
+              color:  'blue',
+              shape:  'rect',
+              label:  'paypal'
+            }
+          }).render('#paypal-button-container');
+        `},
     ];
 
     const { messages } = req.body;
-    messages[messages.length-1].content = `${messages[messages.length-1].content}.`
+    messages[messages.length - 1].content = `${messages[messages.length - 1].content}.`
 
+    /**
+     * Call the OpenAI SDK and get a response
+     */
     try {
-        const response =  await openai.chat.completions.create({
+        const response = await openai.chat.completions.create({
             model: 'gpt-3.5-turbo',
-            messages: [...messages, ...demoModel],
+            messages: [...messages, ...demoModel], // pass the new message and the previous messages
         });
         console.log(response)
         res.json(response.choices[0].message);
@@ -32,8 +56,10 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-
-
+/**
+ * Generate a random animal avatar
+ * using DALLE
+ */
 app.post('/api/avatar', async (req, res) => {
 
     const requestData = {
@@ -47,12 +73,10 @@ app.post('/api/avatar', async (req, res) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer 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`
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
             },
             body: JSON.stringify(requestData)
         });
-
-        console.log(response); // Move this line here
 
         if (response.ok) {
             const data = await response.json();

@@ -40,8 +40,9 @@ function App() {
         chatContainer.scrollTop = chatContainer.scrollHeight;
     }, [messages]);
 
-    useEffect(() =>{
-        const generateImage = async () =>{
+    useEffect(() => {
+        // Create a new avatar when the page loads                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+        const generateImage = async () => {
             try {
                 const response = await fetch("api/avatar", {
                     method: 'POST',
@@ -60,48 +61,48 @@ function App() {
             }
         }
         generateImage();
-    },  [])
+    }, [])
 
     return (
         <div className="App">
-                <div className="chat-container" id="chat-container">
-                        {messages.map((message, index) => (
-                            message.content !== undefined ?
-                            (<div key={index} className={`message ${message.role}`}>
-                                <img src={message.role === 'user' ? userImage : assistantImage} alt="user image" className="avatar" />
-                                {message.role === 'assistant' ? (
-                                    <div className="assistant-message">
-                                        <ReactMarkdown>{message.content}</ReactMarkdown>
-                                    </div>
-                                ) : (
-                                    message.content
-                                )}
-                            </div>)
-                            :
-                            <div key={index} className="message assistant">
-                                Error in the server
-                            </div>
-                        ))}
-                        {(isLoading === 'START' || isLoading === 'DONE') ? <></>  :
-                         <div className="spinner-bar">
-                                <div className="spinner chat"></div>
-                        </div>}
-                </div>
-                    <div className="input-container">
-                    { assistantImage !== null && userImage!== null ?
-                        <>
-                            <textarea
-                                rows="4" cols="50"
-                                value={inputMessage}
-                                onChange={(e) => setInputMessage(e.target.value)}
-                                placeholder="Chat with the AI bot"
-                            />
-                            <button onClick={handleMessageSend}>Send</button>
-
-                        </>
+            <div className="chat-container" id="chat-container">
+                {messages.map((message, index) => (
+                    message.content !== undefined ?
+                        (<div key={index} className={`message ${message.role}`}>
+                            <img src={message.role === 'user' ? userImage : assistantImage} alt="user image" className="avatar" />
+                            {message.role === 'assistant' ? (
+                                <div className="assistant-message">
+                                    <ReactMarkdown>{message.content}</ReactMarkdown>
+                                </div>
+                            ) : (
+                                message.content
+                            )}
+                        </div>)
                         :
-                        (<div className="spinner"></div>)
-                    }
+                        <div key={index} className="message assistant">
+                            Error in the server
+                        </div>
+                ))}
+                {(isLoading === 'START' || isLoading === 'DONE') ? <></> :
+                    <div className="spinner-bar">
+                        <div className="spinner chat"></div>
+                    </div>}
+            </div>
+            <div className="input-container">
+                {assistantImage !== null && userImage !== null ?
+                    <>
+                        <textarea
+                            rows="4" cols="50"
+                            value={inputMessage}
+                            onChange={(e) => setInputMessage(e.target.value)}
+                            placeholder="Chat with the AI bot"
+                        />
+                        <button onClick={handleMessageSend}>Send</button>
+
+                    </>
+                    :
+                    (<div className="spinner"></div>)
+                }
             </div>
         </div>
     );
