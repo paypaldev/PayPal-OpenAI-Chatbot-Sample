@@ -18,7 +18,7 @@
   <hr />
 </div>
 
-# PayPal JavasScript (NodeJS) Subscription
+# PayPal OpenAI Chatbot Sample
 
 This sample app shows how to build and customize a a chatbot using [OpenAI APIs and SDK](https://platform.openai.com/docs/introduction). In this demo we also make use of DALLE for the generation of AI image to be used as avatars in the chat.
 
